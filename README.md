@@ -236,6 +236,8 @@ vercel deploy
 
 Contributions are welcome!
 
+Supreet-21
+
 ```bash
 fork → clone → create branch → commit → push → PR
 ```
