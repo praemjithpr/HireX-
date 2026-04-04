@@ -1,4 +1,3 @@
-Here’s a **clean, professional, detailed README.md** for your project based on the codebase structure 👇
 
 ---
 
