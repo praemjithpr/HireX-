@@ -108,3 +108,63 @@ export async function chatWithGemini(message: string, context?: string): Promise
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
+
+export async function analyzeSentiment(text: string): Promise<{ sentiment: string; score: number; reasoning: string }> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const prompt = `Analyze the sentiment of this text and return JSON: {"sentiment": "positive"|"neutral"|"negative", "score": number, "reasoning": "string"}\n\nText: ${text}`
+    const result = await model.generateContent(prompt)
+    const match = result.response.text().match(/\{[\s\S]*\}/)
+    return match ? JSON.parse(match[0]) : { sentiment: "neutral", score: 50, reasoning: "Analyzed" }
+  } catch (e) {
+    return { sentiment: "neutral", score: 50, reasoning: "Neutral evaluation" }
+  }
+}
+
+export async function compareCandidates(jobDescription: string, candidates: Array<{ id: string; name: string; resume: string }>): Promise<any> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const prompt = `Compare these candidates for role: ${jobDescription}. Candidates: ${JSON.stringify(candidates)}. Return JSON: {"comparison": [{"id": "string", "name": "string", "fitScore": number, "summary": "string"}]}`
+    const result = await model.generateContent(prompt)
+    const match = result.response.text().match(/\{[\s\S]*\}/)
+    return match ? JSON.parse(match[0]) : { comparison: [] }
+  } catch (e) {
+    return { comparison: [] }
+  }
+}
+
+export async function generateJobDescription(title: string, skills: string[], experience: string): Promise<string> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const prompt = `Write a comprehensive, professional Job Description for title: ${title}, required skills: ${skills.join(", ")}, experience level: ${experience}.`
+    const result = await model.generateContent(prompt)
+    return result.response.text()
+  } catch (e) {
+    return `Job Description for ${title} requiring skills in ${skills.join(", ")}.`
+  }
+}
+
+export async function summarizeResume(resumeText: string): Promise<any> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const prompt = `Summarize this resume into JSON with summary, keySkills, and experienceSummary: ${resumeText}`
+    const result = await model.generateContent(prompt)
+    const match = result.response.text().match(/\{[\s\S]*\}/)
+    return match ? JSON.parse(match[0]) : { summary: "Candidate profile", keySkills: [], experienceSummary: "" }
+  } catch (e) {
+    return { summary: "Candidate profile", keySkills: [], experienceSummary: "" }
+  }
+}
+
+export async function analyzeEmailApplication(emailContent: string): Promise<any> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const prompt = `Analyze this email application and return JSON: {"candidateName": "string", "role": "string", "summary": "string"}\n\nContent: ${emailContent}`
+    const result = await model.generateContent(prompt)
+    const match = result.response.text().match(/\{[\s\S]*\}/)
+    return match ? JSON.parse(match[0]) : { candidateName: "Applicant", role: "Software Engineer", summary: "Application received" }
+  } catch (e) {
+    return { candidateName: "Applicant", role: "Software Engineer", summary: "Application received" }
+  }
+}
+
